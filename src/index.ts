@@ -1,6 +1,7 @@
 import bodyParser from "body-parser";
 import express from "express";
 import pg from "pg";
+import path from "path";
 
 import dotenv from "dotenv";
 import cors from 'cors'
@@ -21,6 +22,11 @@ app.use(cors())
 app.get("/", async (req, res) => {
   const { rows } = await pool.query("SELECT NOW()");
   res.send(`Hello, World! The time from the DB is ${rows[0].now}`);
+});
+
+app.get("/api/consumer", async (req, res) => {
+  const filePath = path.join(__dirname, 'index.html');
+  res.sendFile(filePath);
 });
 
 app.listen(port, () => {

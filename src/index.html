@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Api Consumer</title>
+  </head>
+  <body>
+    <h2>This is the api consumer page</h2>
+    <button id="rootCaller">Call root Api EndPoint</button>
+    <button id="wsCaller">Call Api EndPoint</button>
+    <script>
+      const rootCaller = document.querySelector('#rootCaller');
+      const wsCaller = document.querySelector('#wsCaller');
+
+      rootCaller.addEventListener('click', () => {
+        console.log('clicked rootCaller');
+        fetch('/')
+          .then((res) => {
+            console.log(res);
+            return res.text();
+          })
+          .then((res) => {
+            console.log(res);
+          });
+      });
+
+      const ws = new WebSocket('wss://websocketscustomdomain.up.railway.app');
+
+      // Connection opened
+      ws.addEventListener('open', (event) => {
+        console.log('Connection opened', event);
+        ws.send('Hello Server!');
+      });
+
+      // Listen for messages
+      ws.addEventListener('message', (event) => {
+        console.log('Message from server ', event.data);
+      });
+
+      ws.addEventListener('close', (event) => {
+        console.log('Connection closed', event);
+      });
+
+      ws.addEventListener('error', (error) => {
+        console.error('WebSocket error:', error);
+      });
+
+      rootCaller.addEventListener('click', () => {
+        console.log('clicked wsCaller');
+        ws.send('hello server');
+      });
+    </script>
+  </body>
+</html>
