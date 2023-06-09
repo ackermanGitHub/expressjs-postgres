@@ -28,7 +28,7 @@ app.listen(port, () => {
 });
 
 import WebSocket from "ws";
-const wss = new WebSocket.Server({ port: 8080 });
+const wss = new WebSocket.Server();
 
 wss.on('connection', (ws) => {
   console.log("new connection")
