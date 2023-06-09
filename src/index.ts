@@ -28,7 +28,7 @@ app.listen(port, () => {
 });
 
 import WebSocket from "ws";
-const wss = new WebSocket.Server();
+const wss = new WebSocket.Server({ port: parseInt(process.env.PORT || "3333") });
 
 wss.on('connection', (ws) => {
   console.log("new connection")
