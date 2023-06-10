@@ -39,6 +39,11 @@ app.get('/sse', (req, res) => {
   addSSEClient(req, res);
 });
 
+
+app.get("/api/clients", async (req, res) => {
+  res.send(`Hello, World! The time from the DB is ${clients.size}`);
+});
+
 function addSSEClient(req: Request, res: Response) {
   req.on('close', () => clientData = clientData.filter(o => o.res !== res));
   clientData.push({
@@ -88,10 +93,6 @@ const wsServer = new WebSocket.Server({ noServer: true })
 
 // Maintain a list of connected clients
 const clients = new Set<WebSocket>();
-
-app.get("/api/clients", async (req, res) => {
-  res.send(`Hello, World! The time from the DB is ${clients.size}`);
-});
 
 httpServer.on('upgrade', (req, socket, head) => {
   console.log("new connection");
