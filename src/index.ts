@@ -22,8 +22,9 @@ app.use(cors())
 //
 
 app.get("/", async (req, res) => {
-  const { rows } = await pool.query("SELECT NOW()");
-  res.send(`Hello, World! The time from the DB is ${rows[0].now}`);
+  // const { rows } = await pool.query("SELECT NOW()");
+  // res.send(`Hello, World! The time from the DB is ${rows[0].now}`);
+  res.send(`Hello, World! The time from the DB is `);
 });
 
 
@@ -119,7 +120,7 @@ wsServer.on('connection', (ws, request) => {
 
 
     // Send a response to the client based on the protocol used
-    if (protocol === 'ordersSender') {
+    if (protocol?.includes('ordersSender')) {
       clients.forEach((client) => {
         if (client.readyState === WebSocket.OPEN) {
           if (client.protocol === 'ordersReciever') {
@@ -127,7 +128,7 @@ wsServer.on('connection', (ws, request) => {
           }
         }
       })
-    } else if (protocol === 'ordersReciever') {
+    } else if (protocol?.includes('ordersReciever')) {
       clients.forEach((client) => {
         if (client.readyState === WebSocket.OPEN) {
           if (client.protocol === 'ordersSender') {
