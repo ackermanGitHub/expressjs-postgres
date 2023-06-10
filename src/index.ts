@@ -79,11 +79,21 @@ app.get("/api/consumer", async (req, res) => {
   res.sendFile(filePath);
 });
 
-app.listen(port, () => {
+const httpServer = app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`);
 });
 
 import WebSocket from "ws";
+
+const wsServer = new WebSocket.Server({ noServer: true })
+
+httpServer.on('upgrade', (req, socket, head) => {
+  wsServer.handleUpgrade(req, socket, head, (ws) => {
+    wsServer.emit('connection', ws, req)
+  })
+})
+
+/* 
 const wss = new WebSocket.Server({ port: 4200 });
 
 wss.on('connection', (ws) => {
@@ -93,4 +103,4 @@ wss.on('connection', (ws) => {
     ws.send(`You said: ${message}`);
   });
 })
-
+ */
