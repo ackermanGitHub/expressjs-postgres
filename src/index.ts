@@ -39,11 +39,6 @@ app.get('/sse', (req, res) => {
   addSSEClient(req, res);
 });
 
-
-app.get("/api/clients", async (req, res) => {
-  res.send(`Hello, World! The time from the DB is ${clients.size}`);
-});
-
 function addSSEClient(req: Request, res: Response) {
   req.on('close', () => clientData = clientData.filter(o => o.res !== res));
   clientData.push({
@@ -78,9 +73,16 @@ function send() {
 
 //
 
+// Maintain a list of connected clients
+const clients = new Set<WebSocket>();
+
 app.get("/api/consumer", async (req, res) => {
   const filePath = path.join(__dirname, 'index.html');
   res.sendFile(filePath);
+});
+
+app.get("/api/clients", async (req, res) => {
+  res.send(`Hello, World! There are ${clients.size} clients connected`);
 });
 
 const httpServer = app.listen(port, () => {
@@ -90,9 +92,6 @@ const httpServer = app.listen(port, () => {
 import WebSocket from "ws";
 
 const wsServer = new WebSocket.Server({ noServer: true })
-
-// Maintain a list of connected clients
-const clients = new Set<WebSocket>();
 
 httpServer.on('upgrade', (req, socket, head) => {
   console.log("new connection");
