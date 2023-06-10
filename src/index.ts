@@ -70,7 +70,6 @@ function send() {
     }
   }, 1000);
 }
-setTimeout(send);
 
 //
 
@@ -87,17 +86,32 @@ import WebSocket from "ws";
 
 const wsServer = new WebSocket.Server({ noServer: true })
 
+// Maintain a list of connected clients
+const clients = new Set<WebSocket>();
+
 httpServer.on('upgrade', (req, socket, head) => {
-  console.log("new connection")
+  console.log("new connection");
   wsServer.handleUpgrade(req, socket, head, (ws) => {
-    wsServer.emit('connection', ws, req)
-  })
-})
+    clients.add(ws);
+    wsServer.emit('connection', ws, req);
+  });
+});
 
 wsServer.on('connection', (ws) => {
-  console.log("new connection");
+
   ws.on('message', (message) => {
     console.log('Received message:', message.toString());
-    ws.send(`You said: ${message}`);
+
+    // Broadcast the message to all connected clients
+    clients.forEach((client) => {
+      if (client.readyState === WebSocket.OPEN) {
+        client.send(`Client said: ${message}`);
+      }
+    });
+  });
+
+  ws.on('close', () => {
+    // Remove the client from the list of connected clients
+    clients.delete(ws);
   });
 });
