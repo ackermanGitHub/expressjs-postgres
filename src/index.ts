@@ -103,9 +103,9 @@ httpServer.on('upgrade', (req, socket, head) => {
 });
 
 wsServer.on('connection', (ws, request) => {
-  const protocol = request.headers['sec-websocket-protocol'];
+  // const protocol = request.headers['sec-websocket-protocol'];
   //console.log(`WebSocket client connected with protocol: ${protocol}`);
-  ws.send(`WebSocket client connected with protocol: ${protocol}`);
+  // ws.send(`WebSocket client connected with protocol: ${protocol}`);
   /* 
     ws.on('message', (message) => {
       console.log('Received message:', message.toString());
