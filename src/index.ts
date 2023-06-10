@@ -72,7 +72,7 @@ function send() {
 }
 
 //
-/* 
+
 
 app.get("/api/consumer", async (req, res) => {
   const filePath = path.join(__dirname, 'index.html');
@@ -86,9 +86,9 @@ app.get("/api/clients", async (req, res) => {
   res.send(`Hello, World! There are ${clients.size} clients connected`);
 });
 
-const httpServer =  */app.listen(port, () => {
+const httpServer = app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`);
-});/* 
+});
 
 import WebSocket from "ws";
 
@@ -144,4 +144,3 @@ wsServer.on('connection', (ws, request) => {
     clients.delete(ws);
   });
 });
- */
