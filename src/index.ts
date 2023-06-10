@@ -73,17 +73,18 @@ function send() {
 
 //
 
-// Maintain a list of connected clients
-const clients = new Set<WebSocket>();
 
 app.get("/api/consumer", async (req, res) => {
   const filePath = path.join(__dirname, 'index.html');
   res.sendFile(filePath);
 });
 
+/* // Maintain a list of connected clients
+const clients = new Set<WebSocket>();
+
 app.get("/api/clients", async (req, res) => {
   res.send(`Hello, World! There are ${clients.size} clients connected`);
-});
+}); */
 
 const httpServer = app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`);
@@ -96,7 +97,7 @@ const wsServer = new WebSocket.Server({ noServer: true })
 httpServer.on('upgrade', (req, socket, head) => {
   console.log("new connection");
   wsServer.handleUpgrade(req, socket, head, (ws) => {
-    clients.add(ws);
+    // clients.add(ws);
     wsServer.emit('connection', ws, req);
   });
 });
