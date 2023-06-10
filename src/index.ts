@@ -103,43 +103,43 @@ httpServer.on('upgrade', (req, socket, head) => {
 
 wsServer.on('connection', (ws, request) => {
   const protocol = request.headers['sec-websocket-protocol'];
-  console.log(`WebSocket client connected with protocol: ${protocol}`);
+  //console.log(`WebSocket client connected with protocol: ${protocol}`);
   ws.send(`WebSocket client connected with protocol: ${protocol}`);
-
-  ws.on('message', (message) => {
-    console.log('Received message:', message.toString());
-
-    // Broadcast the message to all connected clients
-    clients.forEach((client) => {
-      if (client.readyState === WebSocket.OPEN) {
-        client.send(`Client said: ${message}`);
+  /* 
+    ws.on('message', (message) => {
+      console.log('Received message:', message.toString());
+  
+      // Broadcast the message to all connected clients
+      clients.forEach((client) => {
+        if (client.readyState === WebSocket.OPEN) {
+          client.send(`Client said: ${message}`);
+        }
+      });
+  
+  
+      // Send a response to the client based on the protocol used
+      if (protocol === 'ordersSender') {
+        clients.forEach((client) => {
+          if (client.readyState === WebSocket.OPEN) {
+            if (client.protocol === 'ordersReciever') {
+              client.send(`ordersSender said: ${message}`);
+            }
+          }
+        })
+      } else if (protocol === 'ordersReciever') {
+        clients.forEach((client) => {
+          if (client.readyState === WebSocket.OPEN) {
+            if (client.protocol === 'ordersSender') {
+              client.send(`ordersReciever said: ${message}`);
+            }
+          }
+        })
       }
+  
     });
-
-
-    // Send a response to the client based on the protocol used
-    if (protocol === 'ordersSender') {
-      clients.forEach((client) => {
-        if (client.readyState === WebSocket.OPEN) {
-          if (client.protocol === 'ordersReciever') {
-            client.send(`ordersSender said: ${message}`);
-          }
-        }
-      })
-    } else if (protocol === 'ordersReciever') {
-      clients.forEach((client) => {
-        if (client.readyState === WebSocket.OPEN) {
-          if (client.protocol === 'ordersSender') {
-            client.send(`ordersReciever said: ${message}`);
-          }
-        }
-      })
-    }
-
-  });
-
-  ws.on('close', () => {
-    // Remove the client from the list of connected clients
-    clients.delete(ws);
-  });
+  
+    ws.on('close', () => {
+      // Remove the client from the list of connected clients
+      clients.delete(ws);
+    }); */
 });
