@@ -116,6 +116,7 @@ wsServer.on('connection', (ws, request) => {
       }
     });
 
+
     // Send a response to the client based on the protocol used
     if (protocol === 'ordersSender') {
       clients.forEach((client) => {
