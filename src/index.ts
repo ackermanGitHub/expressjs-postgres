@@ -88,19 +88,16 @@ import WebSocket from "ws";
 const wsServer = new WebSocket.Server({ noServer: true })
 
 httpServer.on('upgrade', (req, socket, head) => {
+  console.log("new connection")
   wsServer.handleUpgrade(req, socket, head, (ws) => {
     wsServer.emit('connection', ws, req)
   })
 })
 
-/* 
-const wss = new WebSocket.Server({ port: 4200 });
-
-wss.on('connection', (ws) => {
-  console.log("new connection")
+wsServer.on('connection', (ws) => {
+  console.log("new connection");
   ws.on('message', (message) => {
     console.log('Received message:', message.toString());
     ws.send(`You said: ${message}`);
   });
-})
- */
+});
