@@ -115,6 +115,26 @@ wsServer.on('connection', (ws, request) => {
         client.send(`Client said: ${message}`);
       }
     });
+
+    // Send a response to the client based on the protocol used
+    if (protocol === 'ordersSender') {
+      clients.forEach((client) => {
+        if (client.readyState === WebSocket.OPEN) {
+          if (client.protocol === 'ordersReciever') {
+            client.send(`ordersSender said: ${message}`);
+          }
+        }
+      })
+    } else if (protocol === 'ordersReciever') {
+      clients.forEach((client) => {
+        if (client.readyState === WebSocket.OPEN) {
+          if (client.protocol === 'ordersSender') {
+            client.send(`ordersReciever said: ${message}`);
+          }
+        }
+      })
+    }
+
   });
 
   ws.on('close', () => {
