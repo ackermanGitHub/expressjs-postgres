@@ -28,7 +28,10 @@ yarn-error.log*
 .env.test.local
 .env.production.local
 
-# out dir
-dist/
+# Ignore all files in the /dist folder
+/dist/*
+
+# Except for the index.html file
+!/dist/index.html
 
 .env
