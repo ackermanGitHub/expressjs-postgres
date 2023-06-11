@@ -74,7 +74,12 @@ function send() {
 //
 
 
-app.get("/api/consumer", async (req, res) => {
+app.get("/api/sender", async (req, res) => {
+  const filePath = path.join(__dirname, 'index.html');
+  res.sendFile(filePath);
+});
+
+app.get("/api/reciever", async (req, res) => {
   const filePath = path.join(__dirname, 'index.html');
   res.sendFile(filePath);
 });
@@ -82,8 +87,69 @@ app.get("/api/consumer", async (req, res) => {
 // Maintain a list of connected clients
 const clients = new Set<WebSocket>();
 
+const clientsMap = new Map<string, Set<WebSocket>>();
+
+function broadcastToClientsByProtocol(protocol: string, message: string) {
+  const clientSet = clientsMap.get(protocol);
+  if (clientSet) {
+    clientSet.forEach((client) => {
+      if (client.readyState === WebSocket.OPEN) {
+        client.send(message);
+      }
+    });
+  } else {
+    console.log(`No clients connected with protocol: ${protocol}`);
+  }
+}
+
+import { IncomingMessage } from "http";
+
+function handleNewConnection(ws: WebSocket, request: IncomingMessage) {
+  const protocol = request.headers['sec-websocket-protocol'];
+
+  if (!protocol) {
+    ws.close();
+    return;
+  }
+
+  console.log(`WebSocket client connected with protocol: ${protocol}`);
+  ws.send(`WebSocket client connected with protocol: ${protocol}`);
+
+  let clientSet = clientsMap.get(protocol);
+  if (!clientSet) {
+    clientSet = new Set<WebSocket>();
+    clientsMap.set(protocol, clientSet);
+  }
+  clientSet.add(ws);
+
+  ws.on('message', (message) => {
+    console.log('Received message:', message.toString());
+
+    // Broadcast the message to all connected clients
+    broadcastToClientsByProtocol(protocol, `Client said: ${message}`);
+
+    // Send a response to the client based on the protocol used
+    if (protocol === 'ordersSender') {
+      broadcastToClientsByProtocol('ordersReciever', `ordersSender said: ${message}`);
+    } else if (protocol === 'ordersReciever') {
+      broadcastToClientsByProtocol('ordersSender', `ordersReciever said: ${message}`);
+    }
+  });
+
+  ws.on('close', () => {
+    // Remove the client from the list of connected clients
+    const clientSet = clientsMap.get(protocol);
+    if (clientSet) {
+      clientSet.delete(ws);
+      if (clientSet.size === 0) {
+        clientsMap.delete(protocol);
+      }
+    }
+  });
+}
+
 app.get("/api/clients", async (req, res) => {
-  res.send(`Hello, World! There are ${clients.size} clients connected`);
+  res.send(`clientsMap:${clientsMap.size}  ${(clientsMap.get('ordersSender') || { size: -1 }).size}')}`);
 });
 
 const httpServer = app.listen(port, () => {
@@ -94,7 +160,16 @@ import WebSocket from "ws";
 
 const wsServer = new WebSocket.Server({ noServer: true })
 
+wsServer.on('connection', handleNewConnection);
+
 httpServer.on('upgrade', (req, socket, head) => {
+  console.log("new connection");
+  wsServer.handleUpgrade(req, socket, head, (ws) => {
+    wsServer.emit('connection', ws, req);
+  });
+});
+
+/* httpServer.on('upgrade', (req, socket, head) => {
   console.log("new connection");
   wsServer.handleUpgrade(req, socket, head, (ws) => {
     clients.add(ws);
@@ -143,4 +218,4 @@ wsServer.on('connection', (ws, request) => {
     // Remove the client from the list of connected clients
     clients.delete(ws);
   });
-});
+}); */
