@@ -108,19 +108,21 @@ function handleNewConnection(ws: WebSocket, request: IncomingMessage) {
   const protocol = request.headers['sec-websocket-protocol'];
 
   if (!protocol) {
-    ws.close();
+    ws.close(404, "No protocol specified");
+    console.log('No protocol specified');
     return;
   }
 
-  console.log(`WebSocket client connected with protocol: ${protocol}`);
-  ws.send(`WebSocket client connected with protocol: ${protocol}`);
-
   let clientSet = clientsMap.get(protocol);
+
   if (!clientSet) {
     clientSet = new Set<WebSocket>();
     clientsMap.set(protocol, clientSet);
   }
   clientSet.add(ws);
+
+  console.log(`WebSocket client connected with protocol: ${protocol}`);
+  ws.send(`WebSocket client connected with protocol: ${protocol}`);
 
   ws.on('message', (message) => {
     console.log('Received message:', message.toString());
