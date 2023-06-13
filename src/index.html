@@ -46,7 +46,6 @@
       ws.addEventListener('error', (error) => {
         console.error('WebSocket error:', error);
       });
-
       wsCaller.addEventListener('click', () => {
         console.log('clicked wsCaller');
         ws.send('hello server');
