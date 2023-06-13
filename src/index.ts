@@ -163,7 +163,18 @@ function handleNewConnection(ws: WebSocket, request: IncomingMessage) {
 }
 
 app.get("/api/clients", async (req, res) => {
-  res.send(`clientsMap:${clientsMap.size}  ${(clientsMap.get('ordersSender') || { size: -1 }).size}')}`);
+  res.send({
+    clientsMap: {
+      size: clientsMap.size,
+      keys: Array.from(clientsMap.keys()),
+    },
+    ordersSendersSet: {
+      size: clientsMap.get('ordersSender')?.size,
+    },
+    ordersRecieversSet: {
+      size: clientsMap.get('ordersReciever')?.size,
+    }
+  });
 });
 
 const httpServer = app.listen(port, () => {
