@@ -188,7 +188,6 @@ const wsServer = new WebSocket.Server({ noServer: true })
 wsServer.on('connection', handleNewConnection);
 
 httpServer.on('upgrade', (req, socket, head) => {
-  console.log("new connection");
   wsServer.handleUpgrade(req, socket, head, (ws) => {
     wsServer.emit('connection', ws, req);
   });
