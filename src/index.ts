@@ -138,6 +138,18 @@ function handleNewConnection(ws: WebSocket, request: IncomingMessage) {
     }
   });
 
+  ws.on('error', (error) => {
+    console.error(`WebSocket error: ${error}`);
+    // Remove the client from the list of connected clients
+    const clientSet = clientsMap.get(protocol);
+    if (clientSet) {
+      clientSet.delete(ws);
+      if (clientSet.size === 0) {
+        clientsMap.delete(protocol);
+      }
+    }
+  });
+
   ws.on('close', () => {
     // Remove the client from the list of connected clients
     const clientSet = clientsMap.get(protocol);
