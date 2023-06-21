@@ -28,13 +28,10 @@
 
       const ws = new WebSocket('ws://localhost:3333', 'ordersSender');
 
-      // Connection opened
       ws.addEventListener('open', (event) => {
         console.log('Connection opened', event);
-        // ws.send('Hello Server!');
       });
 
-      // Listen for messages
       ws.addEventListener('message', (event) => {
         console.log('Message from server ', event.data);
       });
